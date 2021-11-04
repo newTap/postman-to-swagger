@@ -47,7 +47,7 @@ const getPaths = (collection, config) => {
   let result = {}
 
   let allItems = collection.item
-    .map(grouping => grouping.item?grouping.item:grouping)
+    .map(grouping => grouping.item?grouping.item.map(groupingItem => Object.defineProperties(groupingItem,{tags: {value: grouping.name,writable : true}})):grouping)
     .flat(1)
     .forEach(item =>  {
       let path = `/${item.request.url.path.join('/')}`
@@ -57,7 +57,7 @@ const getPaths = (collection, config) => {
 
       // each method (GET, POST, PUT, DELETE) for path
       result[path][item.request.method.toLowerCase()] = {
-
+        tags: [item.tags||'default'],
         summary: item.name,
 
         // parameter types: [query, path, header, body, form]
